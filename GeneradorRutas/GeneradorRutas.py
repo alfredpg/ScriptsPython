@@ -24,6 +24,7 @@ while (seguir == "S") or (seguir == "s") :
     nombreKml = "none"
     
     circuito = input("CIRCUITO : ")
+    tipo_tx = input("TIPO DE RUTA --- AE , SP : ")
     NoRuta = input("Numero de Ruta : ")
     # nombreKml = input("Nombre del kml : ")
     for i in archivoCodigo.index:
@@ -38,20 +39,72 @@ while (seguir == "S") or (seguir == "s") :
     xcircuito = circuito.replace(' ', '_') #remplazamos
     nombreKml = xcircuito
     
-    print('MATRICULACION_' + str(codigo))
-    print("MATRICULACIÓN")
-    print(str(codigo))
-    print(str(xcircuito)+"_"+str(departamento)+"_"+condicion+"_R00"+str(NoRuta))
-    print(str(xcircuito)+"_"+str(departamento)+"_"+condicion+"_R00"+str(NoRuta))
-    print(str(nombreKml))
+    
     
     datos.cell(row=2,column=1).value = 'MATRICULACION_' + str(codigo) 
     datos.cell(row=2,column=2).value = "MATRICULACIÓN"
     datos.cell(row=2,column=3).value = str(codigo)
-    datos.cell(row=2,column=4).value = str(xcircuito)+"_"+str(departamento)+"_"+condicion+"_R00"+str(NoRuta)
-    datos.cell(row=2,column=5).value = str(xcircuito)+"_"+str(departamento)+"_"+condicion+"_R00"+str(NoRuta)
     datos.cell(row=2,column=6).value = str(nombreKml)
+   
+    if (tipo_tx == "AE") or (tipo_tx == "ae") :
+        
+        NOMBRE_RUTA = str(xcircuito)+"_"+str(departamento)+"_AE_"+condicion+"_R00"+str(NoRuta)
+        
+        datos.cell(row=2,column=4).value = NOMBRE_RUTA
+        datos.cell(row=2,column=5).value = NOMBRE_RUTA
+        
+        wb.save(fecha+'_'+xcircuito+'_'+departamento+"_AE_"+condicion+'_'+str(codigo)+'.xlsx')
+        
+        print('MATRICULACION_' + str(codigo))
+        print("MATRICULACIÓN")
+        print(str(codigo))
+        print(NOMBRE_RUTA)
+        print(NOMBRE_RUTA)
+        print(str(nombreKml))
     
-    wb.save(fecha+'_'+xcircuito+'_'+departamento+'_'+condicion+'_'+str(codigo)+'.xlsx')
+    elif (tipo_tx == "SP") or (tipo_tx == "sp") :
+        
+        NOMBRE_RUTA = str(xcircuito)+"_"+str(departamento)+"_SP_"+condicion+"_R00"+str(NoRuta)
+        
+        datos.cell(row=2,column=4).value = NOMBRE_RUTA
+        datos.cell(row=2,column=5).value = NOMBRE_RUTA
+        
+        wb.save(fecha+'_'+xcircuito+'_'+departamento+"_SP_"+condicion+'_'+str(codigo)+'.xlsx')
+        
+        print('MATRICULACION_' + str(codigo))
+        print("MATRICULACIÓN")
+        print(str(codigo))
+        print(NOMBRE_RUTA)
+        print(NOMBRE_RUTA)
+        print(str(nombreKml))
+    
+    else:
+        
+        datos.cell(row=2,column=4).value = str(xcircuito)+"_"+str(departamento)+"_SP_"+condicion+"_R00"+str(NoRuta)
+        datos.cell(row=2,column=5).value = str(xcircuito)+"_"+str(departamento)+"_SP_"+condicion+"_R00"+str(NoRuta)    
+
+        print('MATRICULACION_' + str(codigo))
+        print("MATRICULACIÓN")
+        print(str(codigo))
+        print(NOMBRE_RUTA)
+        print(NOMBRE_RUTA)
+        print(str(nombreKml))
+        
+        wb.save(fecha+'_'+xcircuito+'_'+departamento+"_SP_"+condicion+'_'+str(codigo)+'.xlsx')
+    
+        datos.cell(row=2,column=4).value = str(xcircuito)+"_"+str(departamento)+"_AE_"+condicion+"_R00"+str(NoRuta)
+        datos.cell(row=2,column=5).value = str(xcircuito)+"_"+str(departamento)+"_AE_"+condicion+"_R00"+str(NoRuta)    
+
+        print('MATRICULACION_' + str(codigo))
+        print("MATRICULACIÓN")
+        print(str(codigo))
+        print(NOMBRE_RUTA)
+        print(NOMBRE_RUTA)
+        print(str(nombreKml))
+        
+        wb.save(fecha+'_'+xcircuito+'_'+departamento+"_AE_"+condicion+'_'+str(codigo)+'.xlsx')
     
     seguir = input("crear otra ruta : ")
+
+
+    
