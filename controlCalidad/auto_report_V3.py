@@ -1,14 +1,14 @@
-import dask
+# import dask
 import pandas as pd
-import dask.dataframe as dd
-import numpy as np
-from pandas import ExcelWriter
+# import dask.dataframe as dd
+# import numpy as np
+# from pandas import ExcelWriter
 # from fConsolidarClientes import DistanciaCoord
-import tkinter as tk
+# import tkinter as tk
 from tkinter import filedialog
-from tkinter import messagebox
-from xlwt import Workbook
-import xlwt
+# from tkinter import messagebox
+# from xlwt import Workbook
+# import xlwt
 import time
 import sys
 
@@ -25,6 +25,8 @@ if file_path is None:
     sys.exit()
 
 df = pd.read_excel(file_path, header=0)
+
+t0 = time.time()
 
 # df = pd.read_excel('Informe Tranformadores MLU.xlsx')
 df = df[['Fecha', 'TERRITORIO', 'CIRCUITO', 'ID_BDI','CODELEME', 'CODIGO_BDI_CIRCUITO', 'PLACA MT COLOCADA', 'Equipo Ruta Id', 'PLACA MT ANTERIOR',
@@ -160,3 +162,6 @@ del df['CODIGO_TRANSFORMADOR']
 #imprimimos el df en un excel
 
 df.to_excel('COORDENADAS_xx_SEPTIEMBRE2022_APG.xlsx', sheet_name='CC', index = False)
+
+elapsed_time = '{0:.2f}'.format(time.time() - t0)
+print('Reporte generado en ' + elapsed_time + ' seg')
