@@ -33,7 +33,7 @@ lista_Error_rutas_servidor =[]
 #  ALGO DEBER ESTAR MAL ESCRITO EN EL EXCEL
 # =============================================================================
 # "/ImagenesFormsMap/ImagenesCampo/MLU AIR-E/
-df = pd.read_excel('descarga.xlsx') # SE CARGA EL ARCHIVO EXCEL QUE ESTA DENTRO DE LA CARPETA
+df = pd.read_excel('descarga_lev.xlsx') # SE CARGA EL ARCHIVO EXCEL QUE ESTA DENTRO DE LA CARPETA
 
 #SE CREA RUTA INCIAL A PARTIR DE ARCHIVO EXCEL Y SE EMPAQUETA EN LSITAS
 for i in df.index:
@@ -94,7 +94,6 @@ for ruta in lista_ruta_final_ap[0:len(lista_ruta_final_ap)]:
     try:
         
         ftp.cwd(ruta)
-        n = n+1
         lista_ok_ap.append(id_ap)
     except Exception as e:
         lista_Error_ap.append(id_ap)
