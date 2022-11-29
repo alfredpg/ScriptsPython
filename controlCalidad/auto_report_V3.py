@@ -159,9 +159,12 @@ df = df.merge(df_mt, how='left', on='MATRICULA_ANTIGUA')
 df['CODIGO MT'] = df['CODIGO_TRANSFORMADOR']
 del df['CODIGO_TRANSFORMADOR']
 
+#Eliminar duplicados equipo ruta id
+df = df.drop_duplicates(subset=['Equipo Ruta Id']) 
+
 #imprimimos el df en un excel
+df.to_excel('CONTROL DE CALIDAD.xlsx', sheet_name='CC', index = False)
 
-df.to_excel('COORDENADAS_xx_SEPTIEMBRE2022_APG.xlsx', sheet_name='CC', index = False)
-
+# tiempo de ejecucion
 elapsed_time = '{0:.2f}'.format(time.time() - t0)
 print('Reporte generado en ' + elapsed_time + ' seg')
