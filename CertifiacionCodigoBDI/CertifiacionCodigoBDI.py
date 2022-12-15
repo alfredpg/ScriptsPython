@@ -1,5 +1,6 @@
 # import dask
 import pandas as pd
+from openpyxl import load_workbook
 # import dask.dataframe as dd
 # import numpy as np
 # from pandas import ExcelWriter
@@ -208,13 +209,30 @@ selMatNACercSiPotSi = selMatNACercSiPotSi[selMatNACercSiPotSi["Cód. BDI Certifi
 indexImp = selMatNACercSiPotSi.index
 df_txMatriculados.loc[indexImp,"Cód. BDI Certificado"] =  "Mat Igual: N/A; Mas Cerc: Si; Pot Igual: Si"
 
-    ## Mat Igual: N/A; Mas Cerc: No; Pot Igual: Si; Dist_Entre_Cód's: <= 30 m
+    ## Mat Igual: N/A; Mas Cerc: Si; Pot Igual: No; Dist_Entre_Cód's: <= 30 m
+selMatNACercSi = selMatNA[selMatNA["Mas Cercano"] == "SI"]
+selMatNACercSiPotNo = selMatNACercSi[selMatNACercSi["Val: POTENCIA_NOMINAL"] == "NO"]
+selMatNACercSiPotNo_30 = selMatNACercSiPotNo[selMatNACercSiPotNo["Distancia entre Cód_Censo & Cód_BDI"] <= 30]
+selMatNACercSiPotNo_30 = selMatNACercSiPotNo_30[selMatNACercSiPotNo_30["Cód. BDI Certificado"] == 0]
+indexImp = selMatNACercSiPotNo_30.index
+df_txMatriculados.loc[indexImp,"Cód. BDI Certificado"] =  "Mat Igual: N/A; Mas Cerc: Si; Pot Igual: No; Dist_Entre_Cód's: <= 30 m"
+
+    ## Mat Igual: N/A; Mas Cerc: No; Pot Igual: Si
 selMatNACercNo = selMatNA[selMatNA["Mas Cercano"] == "NO"]
 selMatNACercNoPotSi = selMatNACercNo[selMatNACercNo["Val: POTENCIA_NOMINAL"] == "SI"]
-selMatNACercNoPotSi_30 = selMatNACercNoPotSi[selMatNACercNoPotSi["Distancia entre Cód_Censo & Cód_BDI"] <= 30]
-selMatNACercNoPotSi_30 = selMatNACercNoPotSi_30[selMatNACercNoPotSi_30["Cód. BDI Certificado"] == 0]
-indexImp = selMatNACercNoPotSi_30.index
-df_txMatriculados.loc[indexImp,"Cód. BDI Certificado"] =  "Mat Igual: N/A; Mas Cerc: No; Pot Igual: Si; Dist_Entre_Cód's: <= 30 m"
+selMatNACercNoPotSi = selMatNACercNoPotSi[selMatNACercNoPotSi["Cód. BDI Certificado"] == 0]
+indexImp = selMatNACercNoPotSi.index
+df_txMatriculados.loc[indexImp,"Cód. BDI Certificado"] =  "Mat Igual: N/A; Mas Cerc: No; Pot Igual: Si"
+
+# DIAGRAMA DE ANALISIS E IMPRESION DEL EXCEL
+
+# wb = load_workbook('Plantilla')
+# wb_txMatriculados = wb['Pr01 h2']
+
+with pd.ExcelWriter('Plantilla.xlsx', mode='a', if_sheet_exists='overlay' ) as Writer:
+    df_txMatriculados.to_excel(Writer, sheet_name='Pr01 h2', na_rep='',float_format=None, columns=None, header=False,\
+                               index=False, startrow = 10 , startcol = 4)
+
 
 
 
