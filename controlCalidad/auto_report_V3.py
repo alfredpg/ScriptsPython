@@ -62,7 +62,8 @@ df = df.drop(columns = 'index') #elimina columna index
 #Generacion de codigo id_bdi, codeleme o nuevo
 Sel = df[df['CODELEME'] == 0].index  #filtramos codeleme en cero
 df.loc[Sel,"CODELEME"] = str(10) + df.loc[:,"Equipo Ruta Id"].astype(str) #colocamos el 10 + el ruta id a los codeleme en cero
-Sel = df[df['ID_BDI'] == 0].index #filtramos ID_BDI en cero
+df['ID_BDI'] = df['ID_BDI'].astype(str)
+Sel = df[df['ID_BDI'] == "0"].index #filtramos ID_BDI en cero
 df.loc[Sel,"ID_BDI"] =  df.loc[:,"CODELEME"] #les asignamos el codeleme
 df.rename(columns={'ID_BDI': 'CODIGO'}, inplace=True) #RENOMBRANDO COLUMNA
 del df['CODELEME'] #ELIMINAR COLUMNA CODELEME 
