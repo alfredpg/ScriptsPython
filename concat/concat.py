@@ -13,12 +13,13 @@ if file_path is None:
     # quit()
     sys.exit()
 
+
 t0 = time.time()
 
-df = pd.read_excel(file_path, sheet_name="Lev_E2", header=2)
+df = pd.read_excel(file_path, sheet_name="Lev_E4", header=2)
 df = df.drop(columns = 'Unnamed: 0')
 
-df_buscar = pd.read_excel(file_path, sheet_name="Ruta_E2")
+df_buscar = pd.read_excel(file_path, sheet_name="Ruta_E4")
 df_buscar = df_buscar.drop(columns = 'Unnamed: 0')
 
 print("la cantidad de Rutas a verificar es de: " + str(len(df)))
@@ -27,6 +28,15 @@ print("la cantidad de Rutas a verificar es de: " + str(len(df)))
 a = time.time() - t0
 tiempoCargue = '{0:.2f}'.format(a)
 print("El tiempo de cargue es: " + str(tiempoCargue) + " seg")
+
+#rellenar vacias por ceros
+df['CODIGO'].fillna(0, inplace=True)
+df['CODIGO'] = df['CODIGO'].astype("int64").abs() #CONVERTIMOS A ENTERO ABSOLUTO
+
+df['RUTA'] = df.loc[:,'RUTA'].apply(str.replace,args=('ATLÃNTICO', 'ATLÁNTICO')) #remplazamos
+df['RUTA'] = df.loc[:,'RUTA'].apply(str.replace,args=('MATRICULACIÃ“N', 'MATRICULACIÓN')) #remplazamos
+df['RUTA'] = df.loc[:,'RUTA'].apply(str.replace,args=('SUPERVISIÃ“N_MAT', 'SUPERVISIÓN_MAT')) #remplazamos
+df['RUTA'] = df.loc[:,'RUTA'].apply(str.replace,args=('SUP_EJECUCIÃ“N', 'SUP_EJECUCIÓN')) #remplazamos
 
 df = df.sort_values("CODIGO", ascending=True)
 df = df.reset_index()
@@ -37,7 +47,6 @@ freq = freq.reset_index()
 freq = freq.sort_values("index", ascending=True)
 freq = freq.reset_index()
 freq = freq.drop(columns = 'level_0')
-
 
 n = 0
 nFila = 0
@@ -58,8 +67,13 @@ b = time.time() - a - t0
 tiempoSecuencia = '{0:.2f}'.format(b)
 print("El tiempo para generar la secuencia es: "+ str(tiempoSecuencia)+ " seg")
 
+#df_buscar1 = pd.concat([df_buscar["RUTA_BUSCAR"],df_buscar["RUTA_BUSCAR_1"]],axis=0)
+df_buscar1 = df_buscar["RUTA_BUSCAR"]
+df_buscar1.dropna(inplace=True)
+#print(len(df_buscar["RUTA_BUSCAR"]))
+
 Sel = df[df['TEMPORAL'] == "No"].index
-df.loc[Sel,"Ruta Existe [Si/No]"] =  df["RUTA"].isin(df_buscar['RUTA_BUSCAR']).astype(str)
+df.loc[Sel,"Ruta Existe [Si/No]"] =  df["RUTA"].isin(df_buscar1).astype(str)
 df["Ruta Existe [Si/No]"].replace('False', 'No', inplace=True)
 df["Ruta Existe [Si/No]"].replace('True', 'Si', inplace=True)
 df["Ruta Existe [Si/No]"].fillna('N/A', inplace=True)
