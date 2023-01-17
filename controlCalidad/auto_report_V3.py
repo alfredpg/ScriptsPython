@@ -44,6 +44,12 @@ df.fillna(0, inplace=True)
 #Eliminar usuario MARIA JOSE BLANCO OCHOA
 indexNames = df[df['Nombre del Usuario'] == 'MARIA JOSÉ BLANCO OCHOA' ].index
 df.drop(indexNames , inplace=True)
+#Eliminar usuario DICMAR ANDRES CASTRO DOMINGUEZ
+indexNames = df[df['Nombre del Usuario'] == 'DICMAR ANDRES CASTRO DOMINGUEZ' ].index
+df.drop(indexNames , inplace=True)
+#Eliminar usuario JOHAN STICK BULDING SARMIENTO
+indexNames = df[df['Nombre del Usuario'] == 'JOHAN STICK BULDING SARMIENTO' ].index
+df.drop(indexNames , inplace=True)
 
 #Eliminar ESTADO RE_PUBL Y RE_ELIM
 indexNames = df[df['Estado'] == 'RE_ELIMIN' ].index
@@ -62,8 +68,8 @@ df = df.drop(columns = 'index') #elimina columna index
 #Generacion de codigo id_bdi, codeleme o nuevo
 Sel = df[df['CODELEME'] == 0].index  #filtramos codeleme en cero
 df.loc[Sel,"CODELEME"] = str(10) + df.loc[:,"Equipo Ruta Id"].astype(str) #colocamos el 10 + el ruta id a los codeleme en cero
-df['ID_BDI'] = df['ID_BDI'].astype(str)
-Sel = df[df['ID_BDI'] == "0"].index #filtramos ID_BDI en cero
+df['ID_BDI'] = df['ID_BDI'].astype("int64").abs()
+Sel = df[df['ID_BDI'] == 0].index #filtramos ID_BDI en cero
 df.loc[Sel,"ID_BDI"] =  df.loc[:,"CODELEME"] #les asignamos el codeleme
 df.rename(columns={'ID_BDI': 'CODIGO'}, inplace=True) #RENOMBRANDO COLUMNA
 del df['CODELEME'] #ELIMINAR COLUMNA CODELEME 
