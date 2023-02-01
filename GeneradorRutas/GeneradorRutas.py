@@ -6,8 +6,9 @@ archivoCodigo = pd.read_excel('CODIGOS_CIRCUITO.xlsx')
 
 wb = load_workbook('FEHCA_CIRCUITO_DPTO_ACCESO_IMP_CODIGO.xlsx')
 datos = wb['DATOS_RUTA_TRABAJO']
-
+fecha= input("FECHA AAAAMMDD :")
 condicion_No= input("ACCESO_IMP - 0   CIERRE_CTO - 1  :")
+
 
 if condicion_No == 0:
     condicion = "ACCESO_IMP"
@@ -16,7 +17,6 @@ else:
     
 seguir = "S"
 while (seguir == "S") or (seguir == "s") :
-    fecha = "20221012"
     circuito = "none"
     codigo = 0
     departamento = "none"
