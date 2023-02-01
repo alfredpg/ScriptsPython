@@ -13,13 +13,12 @@ if file_path is None:
     # quit()
     sys.exit()
 
-
 t0 = time.time()
 
-df = pd.read_excel(file_path, sheet_name="Lev_E4", header=2)
+df = pd.read_excel(file_path, sheet_name="Lev_E_Adic", header=2)
 df = df.drop(columns = 'Unnamed: 0')
 
-df_buscar = pd.read_excel(file_path, sheet_name="Ruta_E4")
+df_buscar = pd.read_excel(file_path, sheet_name="Ruta_E_Adic")
 df_buscar = df_buscar.drop(columns = 'Unnamed: 0')
 
 print("la cantidad de Rutas a verificar es de: " + str(len(df)))
@@ -80,6 +79,7 @@ df["Ruta Existe [Si/No]"].fillna('N/A', inplace=True)
 
 df["CODIGO_CONSECUTIVO_FINAL"] = df["CODIGO_CONSECUTIVO"]+df["Ruta Existe [Si/No]"]
 
+df.to_excel('VALIDACION.xlsx', sheet_name='E', index = False)
+
 tiempoTotal = '{0:.2f}'.format(time.time() - t0)
 print("El tiempo total de ejecucion es: " + str(tiempoTotal)+ " seg")
- 
