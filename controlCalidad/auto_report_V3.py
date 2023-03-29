@@ -98,6 +98,10 @@ df.loc[Sel,"FABRICANTE"] = df.loc[:,"MARCA MODIFICADA"] #asignamos
 df.rename(columns={'FABRICANTE': 'Marca'}, inplace=True) #RENOMBRANDO COLUMNA
 del df["OTRA MARCA"] #ELIMINAR COLUMNA
 del df["MARCA MODIFICADA"] #ELIMINAR COLUMNA
+Sel = df[df['Marca'] == 0].index #filtramos
+df.loc[Sel,'Marca'] = "ILEGIBLE" #asignamos
+Sel = df[df['Marca'] == "PDTE"].index #filtramos
+df.loc[Sel,'Marca'] = "ILEGIBLE" #asignamos
 
 #TENSION SECUNDARIA
 Sel = df[df["TENSIÓN SECUNDARIA MODIFICADA (V)"] == 0].index #filtramos
@@ -105,6 +109,10 @@ df.loc[Sel,"TENSIÓN SECUNDARIA MODIFICADA (V)"] = df.loc[:,"RELTRANS"] #asignam
 df["RELTRANS"] = 0 #se coloca columna en cero
 df.rename(columns={'TENSIÓN SECUNDARIA MODIFICADA (V)': 'Tension_Secundaria_(V)',
                     'RELTRANS': 'TENS_SEC'    }, inplace=True)  #RENOMBRANDO COLUMNA
+Sel = df[df['Tension_Secundaria_(V)'] == 0].index #filtramos
+df.loc[Sel,'Tension_Secundaria_(V)'] = "ILEGIBLE" #asignamos
+df["Tension_Secundaria_(V)"] = df["Tension_Secundaria_(V)"].astype(str).apply(\
+                str.replace,args=('13200/', '')) #remplazamos
 
 #ubicacion-tipo de instalacion
 Sel = df[df["CONFIRME TIPO DE INSTALACIÓN"] == 0 ].index #filtramos
@@ -171,6 +179,12 @@ df = df.drop_duplicates(subset=['Equipo Ruta Id'])
 
 #imprimimos el df en un excel
 df.to_excel('CONTROL DE CALIDAD.xlsx', sheet_name='CC', index = False)
+
+
+
+# Sel = df[df['Marca'] == "PDTE"].index #filtramos
+# df.loc[Sel,'Marca'] = "ILEGIBLE" #asignamos
+
 
 # tiempo de ejecucion
 elapsed_time = '{0:.2f}'.format(time.time() - t0)
