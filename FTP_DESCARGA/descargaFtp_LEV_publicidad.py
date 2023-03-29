@@ -37,11 +37,10 @@ lista_id_carpetas_existentes = []
 # =============================================================================
 lc1 = "/ImagenesFormsMap/ImagenesCampo/MLU AIR-E/"
 lc2 = "/MLU AIR-E/"
-prefijo = "750_"
+
 #credenciales
 usuario = 'lcabrera'
 contraseña = '123456'
-
 
 
 if usuario == 'lcabrera2':
@@ -49,7 +48,7 @@ if usuario == 'lcabrera2':
 else:
     inicio = lc1
 
-df = pd.read_excel('descarga_lev_apoyo.xlsx') # SE CARGA EL ARCHIVO EXCEL QUE ESTA DENTRO DE LA CARPETA
+df = pd.read_excel('descarga_lev_otrasCargas.xlsx') # SE CARGA EL ARCHIVO EXCEL QUE ESTA DENTRO DE LA CARPETA
 #rellenar vacias por ceros
 df.fillna(0, inplace=True)
 #SE CREA RUTA INCIAL A PARTIR DE ARCHIVO EXCEL Y SE EMPAQUETA EN LSITAS
@@ -88,7 +87,7 @@ lista_ruta_final_ap = []
 #RUTA FINAL AP
 n=0
 for ruta in lista_ruta_servidor[0:len(lista_ruta_servidor)]:
-    ruta_final = ruta+"/"+prefijo+lista_id_ap[n]
+    ruta_final = ruta+"/"+"794_"+lista_id_ap[n]
     n = n+1
     lista_ruta_final_ap.append(ruta_final)
     
@@ -97,7 +96,7 @@ for ruta in lista_ruta_servidor[0:len(lista_ruta_servidor)]:
 # print(lista_ruta_final_ap)
 
 print(" ")
-print("DE " + str(len(lista_ruta_final_ap)) + " AP BUSCADOS")
+print("DE " + str(len(lista_ruta_final_ap)) + " Otras Cargas Buscadas")
 
 #SE VALIDAN LAS RUTASDINALES AP Y SE LISTAN LAS OK Y ERRORES
 n=0
@@ -124,24 +123,24 @@ for ruta in lista_ruta_final_ap[0:len(lista_ruta_final_ap)]:
             # print(ruta)
             lista_ruta_final_ap.remove(ruta)
             break
-    print(n)
+    #print(n)
     n = n+1
 
-print("SE ENCONTRARON " + str(len(lista_ruta_final_ap)) + " AP")
+print("SE ENCONTRARON " + str(len(lista_ruta_final_ap)) + " OC")
 # print(len(lista_ruta_final_ap))
 print(" ")
 
 #AUTORIZACION PARA DESCARGAR
 confirma_descarga = "si"
 print(" ")
-#confirma_descarga = input("¿desea comenzar la descargar?  si / no  : ")
+confirma_descarga = input("¿desea comenzar la descargar?  si / no  : ")
 print(" ")
 #CODIGO DE DESCARGA
 if confirma_descarga == "si":    
     n=0
     for nombre_carpeta in lista_ok_ap[0:len(lista_ok_ap)]: #SE CREAN LAS CARPETAS LOCALES
         try:
-            os.mkdir('//10.20.11.240/censo$/RF_Censo/RF_Ises/Adicional/AP/E1_3/'+prefijo+nombre_carpeta)
+            os.mkdir('//10.20.11.240/censo$/RF_Censo/RF_Ises/Adicional/Otras Cargas/'+"794_"+nombre_carpeta)
         except FileExistsError:
             #print("apoyo duplicado / carpeta ya creada: 762_"+str(nombre_carpeta))
             lista_id_carpetas_existentes.append(nombre_carpeta)
@@ -157,9 +156,9 @@ if confirma_descarga == "si":
     
     for nombre_carpeta in lista_ok_ap[0:len(lista_ok_ap)]: #SE CARGAN LAS LAS CARPETAS LOCALES
         while True:
-            os.chdir('//10.20.11.240/censo$/RF_Censo/RF_Ises/Adicional/AP/E1_3/'+prefijo+nombre_carpeta)
+            os.chdir('//10.20.11.240/censo$/RF_Censo/RF_Ises/Adicional/Otras Cargas/'+"794_"+nombre_carpeta)
             print(" ")
-            print(prefijo+nombre_carpeta+" "+str(n+1))
+            print("794_"+nombre_carpeta+" "+str(n+1))
             try:
                 ftp.cwd(lista_ruta_final_ap[n])              #SE BUSCA LA RUTA EN EL SERVIDOR
                 # ftp.dir() 
@@ -167,8 +166,9 @@ if confirma_descarga == "si":
                 # print(archivos)
                 if 'Temp' in archivos:              #SE ELIMINA LA CARPETA TEMP DE LO QUE SE DESCARGARA
                     # print ('existen archivos temporales')
+                    #print(archivos)
                     archivos.remove('Temp')
-                    # print(archivos)
+                    #print(archivos)
                     
                 else:
                     print ('NO existen archivos temporales')
@@ -201,12 +201,12 @@ if confirma_descarga == "si":
 
         n = n+1
         lista_descargado.append(nombre_carpeta)
-    print("------- termenino descarga ap-------")
+    print("------- termenino descarga OC-------")
 
 else:
     print("no se descargo nada")    #EN CASO DE NO COLOCAR si 
 
 ftp.close()
 
-df_descargado = pd.DataFrame(lista_descargado)
-df_descargado.to_excel('C:/Users/P568/Desktop/PROYECTOS_ISES/FTP_DESCARGA/descargados_1402.xlsx', sheet_name='Descargados', index = False)
+#df_descargado = pd.DataFrame(lista_descargado)
+#df_descargado.to_excel('C:/Users/P568/Desktop/PROYECTOS_ISES/FTP_DESCARGA/descargados.xlsx', sheet_name='Descargados', index = False)
