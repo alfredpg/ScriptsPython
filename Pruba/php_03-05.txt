@@ -1,0 +1,154 @@
+<?php
+
+$concepts = '[
+  {
+    "id": "HO",
+    "name": "HO",
+    "start": "08:00",
+    "end": "17:59"
+  },
+  {
+    "id": "HED",
+    "name": "HED",
+    "start": "18:00",
+    "end": "20:59"
+  },
+  {
+    "id": "HEN",
+    "name": "HEN",
+    "start": "21:00",
+    "end": "05:59"
+  }
+]';
+$concepts = json_decode($concepts,true);
+//var_dump($concepts);
+$attendanceIn = "05:00";
+$attendanceOut = "09:00";
+echo($attendanceIn."   ".$attendanceOut."\n");
+//Inicio
+function hourIsBetween($from, $to, $input) {
+    $dateFrom = DateTime::createFromFormat('!H:i', $from);
+    $dateTo = DateTime::createFromFormat('!H:i', $to);
+    $dateInput = DateTime::createFromFormat('!H:i', $input);
+    if ($dateFrom > $dateTo) $dateTo->modify('+1 day');
+    return ($dateFrom <= $dateInput && $dateInput <= $dateTo) || ($dateFrom <= $dateInput->modify('+1 day') && $dateInput <= $dateTo);
+}
+
+function conceptoMasProximo($concepts,$horaEntrada){
+    $conceptoRespuesta = null;
+    $diffValue = 0;
+    foreach($concepts as $concept){
+        //var_dump($concept["start"]);
+        //var_dump($horaEntrada);
+        $diff = (new DateTime($concept["start"])) -> diff(new DateTime($horaEntrada));
+        $diff = round($diff->h + ($diff->i/60),1);
+        //var_dump($diff);
+        if($diff <= $diffValue || $diffValue == 0){
+            $conceptoRespuesta = $concept;
+            $diffValue = $diff;
+        }
+    }
+    return $conceptoRespuesta;
+}
+
+function classifyAttendances($concepts, $attendanceIn,$attendanceOut){
+$respuesta = [];
+$cantidadHoras = 0;
+$entrada = $attendanceIn;
+$salida = $attendanceOut;
+$iFin = count($concepts);
+$i = 0;
+
+//$conceptoMasCercano = conceptoMasProximo($concepts,$entrada);
+//if($entrada < $conceptoMasCercano["start"]){
+//      $entrada = $conceptoMasCercano["start"];
+//}
+    
+$horaInicio = null;
+$horaFinal = null;
+while ($i<$iFin){
+    $cantidadHoras = 0;
+    $from = $concepts[$i]["start"];
+    //echo($from."\n");
+    $to = $concepts[$i]["end"];
+    //echo($to."\n");
+    $conceptoEvaluado = $concepts[$i]["id"];
+    echo($conceptoEvaluado."\n");
+    $dateEntrada = DateTime::createFromFormat('!H:i', $entrada);
+    //var_dump($dateEntrada);
+    
+    $conceptoHoraInicio = (hourIsBetween($from, $to, $entrada) ? $conceptoEvaluado : 'N/A');
+    //echo($conceptoHoraInicio." antes de \n");
+    if ($conceptoHoraInicio == 'N/A'){
+        $conceptoHoraInicio = (hourIsBetween($concepts[$iFin-1]["end"],$concepts[0]["start"],$entrada) ? 'HO' : 'N/A');
+        if ($conceptoHoraInicio == 'N/A'){
+            
+        }
+        //echo($conceptoHoraInicio." despues de \n");
+    }
+    $conceptoHoraFinal = (hourIsBetween($from, $to, $salida) ? $conceptoEvaluado : 'N/A');
+    if ($conceptoHoraFinal == 'N/A'){
+        $conceptoHoraFinal = (hourIsBetween($concepts[$iFin-1]["end"],$concepts[0]["start"],$entrada) ? 'HO' : 'N/A');
+        //echo($concepts[$iFin-1]." este es el concepto \n");
+    }
+    echo($entrada ." entrada \n");
+    echo($from ." desde \n");
+    echo($to ." Hasta \n");
+    echo($conceptoHoraInicio ." CONCEPTO ENTRADA \n");
+    echo($conceptoHoraFinal ." CONCEPTO FINAL \n");
+    $horaInicio = new DateTime($entrada);
+    $horaFinal = new DateTime($salida);
+    
+    if($conceptoHoraInicio == $conceptoHoraFinal && $conceptoHoraInicio == 'N/A'){
+        echo("caso 0 \n");
+        $respuesta[]=[$conceptoEvaluado => $cantidadHoras];
+        $i++;
+        continue;
+    }
+
+    if ($conceptoHoraInicio == $conceptoHoraFinal && $horaFinal<$horaInicio) {
+        echo("caso 1 \n");
+        $horaInicio = new DateTime($entrada);
+        $horaFinal = new DateTime($to);
+        echo($to." hora salida\n");
+        $cantidadHoras = $horaFinal -> diff($horaInicio);
+        $cantidadHoras = round($cantidadHoras->h + ($cantidadHoras->i/60),1);
+        $cantidadHoras = 24-$cantidadHoras;
+        $entrada = ($horaFinal->modify('+1 minute'))->format('H:i');
+    }
+    elseif ($conceptoHoraInicio == $conceptoHoraFinal && $horaFinal>=$horaInicio) {
+        echo("caso 2 \n");
+        $horaInicio = new DateTime($entrada);
+        $horaFinal = new DateTime($salida);
+        $cantidadHoras = $horaFinal -> diff($horaInicio);
+        $cantidadHoras = round($cantidadHoras->h + ($cantidadHoras->i/60),1);
+        $entrada = ($horaFinal->modify('+1 minute'))->format('H:i');
+    }
+    
+    else{
+        echo("caso else \n");
+        $horaInicio = new DateTime($entrada);
+        echo($entrada." hora entrada\n");
+        $horaFinal = new DateTime($to);
+        echo($to." hora salida\n");
+        $cantidadHoras = $horaFinal -> diff($horaInicio);
+        $cantidadHoras = round($cantidadHoras->h + ($cantidadHoras->i/60),1);
+        if ($horaFinal<$horaInicio){
+            $cantidadHoras = 24-$cantidadHoras;
+        }
+        $entrada = ($horaFinal->modify('+1 minute'))->format('H:i');
+    }
+    $respuesta[]=[$conceptoEvaluado => $cantidadHoras];
+    $i++;
+    echo($cantidadHoras." Cantidad de Horas\n");
+}
+
+return json_encode($respuesta);
+}
+
+//$res = conceptoMasProximo($concepts,$attendanceIn);
+$res = classifyAttendances($concepts,$attendanceIn,$attendanceOut);
+echo($res);
+//Fin
+
+?>
