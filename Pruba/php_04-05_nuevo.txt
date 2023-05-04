@@ -20,10 +20,11 @@ $concepts = '[
     "end": "05:59"
   }
 ]';
+
 $concepts = json_decode($concepts,true);
 //var_dump($concepts);
-$attendanceIn = "12:00";
-$attendanceOut = "8:00";
+$attendanceIn = "8:00";
+$attendanceOut = "4:00";
 echo($attendanceIn."   ".$attendanceOut."\n");
 //Inicio
 function hourIsBetween($from, $to, $input) {
@@ -124,14 +125,31 @@ while ($i<$iFin){
     elseif ($conceptoHoraInicio != $conceptoHoraFinal && $horaFinal<$horaInicio) {
         echo("caso 3 F<I  !=  \n");
         if ($conceptoHoraInicio != 'N/A' && $conceptoHoraFinal == 'N/A'){
-            $cantidadHoras = $horaTo -> diff($horaInicio);
-            $cantidadHoras = round($cantidadHoras->h + ($cantidadHoras->i/60),1);
-            $entrada = ($horaTo->modify('+1 minute'))->format('H:i');
+            if ($horaTo<$horaFrom){
+                $cantidadHoras = $horaFinal -> diff($horaInicio);
+                $cantidadHoras = round($cantidadHoras->h + ($cantidadHoras->i/60),1);
+                $cantidadHoras = 24-$cantidadHoras;
+                $entrada = ($horaTo->modify('+1 minute'))->format('H:i');
+            }
+            else{
+              $cantidadHoras = $horaTo -> diff($horaInicio);
+              $cantidadHoras = round($cantidadHoras->h + ($cantidadHoras->i/60),1);
+              $entrada = ($horaTo->modify('+1 minute'))->format('H:i');              
+            }
+
         }
         elseif($conceptoHoraInicio != 'N/A' && $conceptoHoraFinal != 'N/A'){
-            $cantidadHoras = $horaTo -> diff($horaInicio);
-            $cantidadHoras = round($cantidadHoras->h + ($cantidadHoras->i/60),1);
-            $entrada = ($horaTo->modify('+1 minute'))->format('H:i');            
+            if ($horaTo<$horaFrom){
+                $cantidadHoras = $horaFinal -> diff($horaInicio);
+                $cantidadHoras = round($cantidadHoras->h + ($cantidadHoras->i/60),1);
+                $cantidadHoras = 24-$cantidadHoras;
+                $entrada = ($horaTo->modify('+1 minute'))->format('H:i');
+            }
+            else{
+                $cantidadHoras = $horaTo -> diff($horaInicio);
+                $cantidadHoras = round($cantidadHoras->h + ($cantidadHoras->i/60),1);
+                $entrada = ($horaTo->modify('+1 minute'))->format('H:i');            
+            }
         }
         else{
             echo("No contemplado \n");
