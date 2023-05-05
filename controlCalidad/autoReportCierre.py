@@ -58,8 +58,11 @@ df.fillna(0, inplace=True)
 df.insert(0,"CODIGO",0)
 sel = df[df['ID_BDI'] == "trasformador fue desmontado yel sitio remodelado"]
 df.loc[sel.index,"ID_BDI"] =  0
+df['ID_BDI'].replace(' ', 0, inplace=True)
 df['CODIGO'] = df['ID_BDI'].astype("int64").abs()
 sel = df[df['CODELEME'] == "TRANSFORMADOR DE DISTRIBUCION"]
+df.loc[sel.index,"CODELEME"] =  0
+sel = df[df['CODELEME'] == "DISTRIBUCION"]
 df.loc[sel.index,"CODELEME"] =  0
 sel = df[df['CODIGO'] == 0]
 df.loc[sel.index,"CODIGO"] =  df.loc[:,"CODELEME"].astype("int64").abs()
@@ -104,5 +107,5 @@ else:
                 worksheet.write(0, col_num, value, header_format)
                 worksheet.set_column(0,col_num, 20)
 
-elapsed_time = '{0:.2f}'.format(time.time() - t0 - t)
+elapsed_time = '{0:.2f}'.format(time.time() - t)
 print('Reporte generado en ' + elapsed_time + ' seg')
