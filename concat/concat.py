@@ -15,10 +15,10 @@ if file_path is None:
 
 t0 = time.time()
 
-df = pd.read_excel(file_path, sheet_name="Lev_E_Adic", header=2)
+df = pd.read_excel(file_path, sheet_name="Lev_E9", header=2)
 df = df.drop(columns = 'Unnamed: 0')
 
-df_buscar = pd.read_excel(file_path, sheet_name="Ruta_E_Adic")
+df_buscar = pd.read_excel(file_path, sheet_name="Ruta_E9")
 df_buscar = df_buscar.drop(columns = 'Unnamed: 0')
 
 print("la cantidad de Rutas a verificar es de: " + str(len(df)))
