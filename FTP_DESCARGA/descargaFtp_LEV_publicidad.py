@@ -59,10 +59,8 @@ for i in df.index:
     #SE EXTRAEN LOS RUTA ID AP Y SE LISTAN
     n_id_ap = str(df["RUTA ID"][i])
     lista_descarga.append(n_id_ap)
-    lista_id_ap.append(n_id_ap)
-    
+    lista_id_ap.append(n_id_ap)  
     # print(i)
-    
 # print(lista_ruta_servidor)
 print(len(lista_ruta_servidor))
 

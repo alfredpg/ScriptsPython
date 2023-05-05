@@ -220,13 +220,13 @@ if confirma_descarga == "si":
     n=0
     for nombre_carpeta in lista_ok_tx[0:len(lista_ok_tx)]:  #SE CREAN LAS CARPETAS LOCALES
         try:
-            os.mkdir("749_"+nombre_carpeta)
+            os.mkdir("//10.20.11.240/censo$/RF_Censo/RF_Ises/Adicional/Desconectados/749_"+nombre_carpeta)
         except FileExistsError:
             print("carpeta ya creada: 749_"+str(nombre_carpeta))
     
     for nombre_carpeta in lista_ok_tx[0:len(lista_ok_tx)]:  #SE CARGAN LAS LAS CARPETAS LOCALES      
         while True:
-            os.chdir('C:/Users/P568/Desktop/PROYECTOS_ISES/FTP_DESCARGA/'+"749_"+nombre_carpeta)
+            os.chdir('//10.20.11.240/censo$/RF_Censo/RF_Ises/Adicional/Desconectados/'+"749_"+nombre_carpeta)
             print("749_"+nombre_carpeta+" "+str(n))
             try:
                 ftp.cwd(lista_ruta_final_tx[n])         #SE BUSCA LA RUTA EN EL SERVIDOR
@@ -258,18 +258,18 @@ if confirma_descarga == "si":
         n = n+1            
     print("------- termenino descarga tx-------")
     
-    os.chdir('C:/Users/P568/Desktop/PROYECTOS_ISES/FTP_DESCARGA')
+    os.chdir('//10.20.11.240/censo$/RF_Censo/RF_Ises/Adicional/Desconectados')
     
     n=0
     for nombre_carpeta in lista_ok_ap[0:len(lista_ok_ap)]: #SE CREAN LAS CARPETAS LOCALES
         try:
-            os.mkdir("761_"+nombre_carpeta)
+            os.mkdir("//10.20.11.240/censo$/RF_Censo/RF_Ises/Adicional/Desconectados/761_"+nombre_carpeta)
         except FileExistsError:
             print("apoyo duplicado / carpeta ya creada: 761_"+str(nombre_carpeta))
         
     for nombre_carpeta in lista_ok_ap[0:len(lista_ok_ap)]: #SE CARGAN LAS LAS CARPETAS LOCALES
         while True:    
-            os.chdir('C:/Users/P568/Desktop/PROYECTOS_ISES/FTP_DESCARGA/'+"761_"+nombre_carpeta)
+            os.chdir('//10.20.11.240/censo$/RF_Censo/RF_Ises/Adicional/Desconectados/'+"761_"+nombre_carpeta)
             print("761_"+nombre_carpeta+" "+str(n))
             try:
                 ftp.cwd(lista_ruta_final_ap[n])              #SE BUSCA LA RUTA EN EL SERVIDOR

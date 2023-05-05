@@ -39,7 +39,7 @@ lc1 = "/ImagenesFormsMap/ImagenesCampo/MLU AIR-E/"
 lc2 = "/MLU AIR-E/"
 prefijo = "750_"
 #credenciales
-usuario = 'lcabrera'
+usuario = 'lcabrera2'
 contraseña = '123456'
 
 
@@ -132,16 +132,16 @@ print("SE ENCONTRARON " + str(len(lista_ruta_final_ap)) + " AP")
 print(" ")
 
 #AUTORIZACION PARA DESCARGAR
-confirma_descarga = "si"
+confirma_descarga = "no"
 print(" ")
-#confirma_descarga = input("¿desea comenzar la descargar?  si / no  : ")
+confirma_descarga = input("¿desea comenzar la descargar?  si / no  : ")
 print(" ")
 #CODIGO DE DESCARGA
 if confirma_descarga == "si":    
     n=0
     for nombre_carpeta in lista_ok_ap[0:len(lista_ok_ap)]: #SE CREAN LAS CARPETAS LOCALES
         try:
-            os.mkdir('//10.20.11.240/censo$/RF_Censo/RF_Ises/Adicional/AP/E1_3/'+prefijo+nombre_carpeta)
+            os.mkdir('//10.20.11.240/censo$/RF_Censo/RF_Ises/Adicional/Desconectados/'+prefijo+nombre_carpeta)
         except FileExistsError:
             #print("apoyo duplicado / carpeta ya creada: 762_"+str(nombre_carpeta))
             lista_id_carpetas_existentes.append(nombre_carpeta)
@@ -157,7 +157,7 @@ if confirma_descarga == "si":
     
     for nombre_carpeta in lista_ok_ap[0:len(lista_ok_ap)]: #SE CARGAN LAS LAS CARPETAS LOCALES
         while True:
-            os.chdir('//10.20.11.240/censo$/RF_Censo/RF_Ises/Adicional/AP/E1_3/'+prefijo+nombre_carpeta)
+            os.chdir('//10.20.11.240/censo$/RF_Censo/RF_Ises/Adicional/Desconectados/'+prefijo+nombre_carpeta)
             print(" ")
             print(prefijo+nombre_carpeta+" "+str(n+1))
             try:
@@ -209,4 +209,4 @@ else:
 ftp.close()
 
 df_descargado = pd.DataFrame(lista_descargado)
-df_descargado.to_excel('C:/Users/P568/Desktop/PROYECTOS_ISES/FTP_DESCARGA/descargados_1402.xlsx', sheet_name='Descargados', index = False)
+df_descargado.to_excel('C:/Users/P568/Desktop/PROYECTOS_ISES/FTP_DESCARGA/descargados_0304.xlsx', sheet_name='Descargados', index = False)

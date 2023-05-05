@@ -136,12 +136,12 @@ if confirma_descarga == "si":
     n=0
     for nombre_carpeta in lista_ok_tx[0:len(lista_ok_tx)]:  #SE CREAN LAS CARPETAS LOCALES
         try:
-            os.mkdir("767_"+nombre_carpeta)
+            os.mkdir("//10.20.11.240/censo$/RF_Censo/RF_Ises/Adicional/Desconectados/767_"+nombre_carpeta)
         except FileExistsError:
             print("carpeta ya creada: 767_"+str(nombre_carpeta))
     for nombre_carpeta in lista_ok_tx[0:len(lista_ok_tx)]:  #SE CARGAN LAS LAS CARPETAS LOCALES
         
-            os.chdir('C:/Users/P568/Desktop/PROYECTOS_ISES/FTP_DESCARGA/'+"767_"+nombre_carpeta)
+            os.chdir('//10.20.11.240/censo$/RF_Censo/RF_Ises/Adicional/Desconectados/'+"767_"+nombre_carpeta)
             print("767_"+nombre_carpeta+" "+str(n))
             ftp.cwd(lista_ruta_final_tx[n])         #SE BUSCA LA RUTA EN EL SERVIDOR
             n = n+1
@@ -171,12 +171,12 @@ if confirma_descarga == "si":
     n=0
     for nombre_carpeta in lista_ok_ap[0:len(lista_ok_ap)]: #SE CREAN LAS CARPETAS LOCALES
         try:
-            os.mkdir("750_"+nombre_carpeta)
+            os.mkdir("//10.20.11.240/censo$/RF_Censo/RF_Ises/Adicional/Desconectados/750_"+nombre_carpeta)
         except FileExistsError:
             print("apoyo duplicado / carpeta ya creada: 750_"+str(nombre_carpeta))
         
     for nombre_carpeta in lista_ok_ap[0:len(lista_ok_ap)]: #SE CARGAN LAS LAS CARPETAS LOCALES    
-        os.chdir('C:/Users/P568/Desktop/PROYECTOS_ISES/FTP_DESCARGA/'+"750_"+nombre_carpeta)
+        os.chdir('//10.20.11.240/censo$/RF_Censo/RF_Ises/Adicional/Desconectados/'+"750_"+nombre_carpeta)
         print("750_"+nombre_carpeta+" "+str(n))
         ftp.cwd(lista_ruta_final_ap[n])              #SE BUSCA LA RUTA EN EL SERVIDOR
         n = n+1
