@@ -6,7 +6,7 @@ archivoCodigo = pd.read_excel('CODIGOS_CIRCUITO.xlsx')
 
 wb = load_workbook('FEHCA_CIRCUITO_DPTO_ACCESO_IMP_CODIGO.xlsx')
 datos = wb['DATOS_RUTA_TRABAJO']
-fecha= input("FECHA AAAAMMDD :")
+fecha= input("FECHA formato(AAAAMMDD) sin separadores :")
 condicion_No= input("ACCESO_IMP - 0   CIERRE_CTO - 1  :")
 
 
@@ -33,7 +33,7 @@ while (seguir == "S") or (seguir == "s") :
             departamento = archivoCodigo["TERRITORIO (ID 145)"][i]
     
     if codigo == 0:
-        codigo = input("CODIGO : ")
+        codigo = input("CODIGO BDI CTO: ")
         departamento = input("TERRITORIO : ")
     
     xcircuito = circuito.replace(' ', '_') #remplazamos

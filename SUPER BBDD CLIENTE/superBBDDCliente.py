@@ -417,6 +417,12 @@ tiempoEjecucion = '{0:.2f}'.format(a)
 tiempoEjecucion = float(tiempoEjecucion) - float(tiempoCargue)
 print("El tiempo de ejecucion es: " + str(tiempoEjecucion) + " seg")
 
+# =============================================================================
+# 
+# =============================================================================
+df_superBBDD4 = pd.read_csv('SuperBBDD_Clientes_23 ENE.csv', encoding="ANSI", delimiter=";", on_bad_lines="skip",low_memory=False)
+
+
 
 # =============================================================================
 # adicional
@@ -426,8 +432,15 @@ df_superBBDD4.loc[:,"DEPARTAMENTO_CLI"] = df_superBBDD4.loc[:,"DEPARTAMENTO_CLI"
                 str.replace,args=('LA GUAJIRA', 'GUAJIRA')) #remplazamos
 df_superBBDD4.loc[:,"DEPARTAMENTO"] = df_superBBDD4.loc[:,"DEPARTAMENTO"].astype(str).apply(\
                 str.replace,args=('Guajira', 'GUAJIRA')) #remplazamos
+
+df_superBBDD4.loc[:,"DEPARTAMENTO_CLI"] = df_superBBDD4.loc[:,"DEPARTAMENTO_CLI"].astype(str).apply(\
+                str.replace,args=('ATLÃƒÆ’Ã‚Æ’Ãƒâ€šÃ‚ÂNTICO', 'ATLANTICO')) #remplazamos
+    
 departamentos = df_superBBDD4['DEPARTAMENTO_CLI']
 departamentos.drop_duplicates(keep='first', inplace=True)
+
+df_ATLANTICO = df_superBBDD4[df_superBBDD4['DEPARTAMENTO_CLI'] == "ATLANTICO"]
+df_ATLANTICO.to_csv(path_or_buf='clientes_atlantico.csv', sep=';', index=False)
 
 df_guajira = df_superBBDD4[df_superBBDD4['DEPARTAMENTO_CLI'] == "LA GUAJIRA"]
 df_guajira.to_csv(path_or_buf='clientes_guajira.csv', sep=';', index=False)
