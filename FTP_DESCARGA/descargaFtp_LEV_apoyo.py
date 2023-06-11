@@ -1,3 +1,17 @@
+# #RECORDATORIOS DOC EXCEL:
+# =============================================================================
+# TILDAR LA A DE ATLANTICO DEBE QUEDAR ATLÁNTICO
+# CAMBIAR ESPACIOS POR _
+# CAMBIAR LOS NOMBRES DE LOS TERRITORIOS 01_ 02_ ETC
+# =============================================================================
+# =============================================================================
+#  IndexError: list index out of range = 
+#  SIGIFICA QUE NO HAY CARPETA MATRICULACION DENTRO DEL CIRCUITO
+#
+#  error_perm: 550 CWD failed. "/MLU AIR-E/03_MAGDALENA/PLATO/PLATO__I": directory not found. =
+#  ALGO DEBER ESTAR MAL ESCRITO EN EL EXCEL
+# =============================================================================
+
 # LIBRERIAS
 from ftplib import FTP
 import os
@@ -21,28 +35,23 @@ lista_ok_tx = []
 lista_Error_rutas_servidor =[]
 lista_descargado =[] 
 lista_id_carpetas_existentes = []
+# =============================================================================
+# VARIABLES CAMBIANTES
+# =============================================================================
+#Ruta donde se descargaran
+rutaDescarga = "//10.20.11.240/censo$/RF_Censo/Alfredo/pruebaDescargaVpn"
 
-# #RECORDATORIOS DOC EXCEL:
-# =============================================================================
-# TILDAR LA A DE ATLANTICO DEBE QUEDAR ATLÁNTICO
-# CAMBIAR ESPACIOS POR _
-# CAMBIAR LOS NOMBRES DE LOS TERRITORIOS 01_ 02_ ETC
-# =============================================================================
-# =============================================================================
-#  IndexError: list index out of range = 
-#  SIGIFICA QUE NO HAY CARPETA MATRICULACION DENTRO DEL CIRCUITO
-#
-#  error_perm: 550 CWD failed. "/MLU AIR-E/03_MAGDALENA/PLATO/PLATO__I": directory not found. =
-#  ALGO DEBER ESTAR MAL ESCRITO EN EL EXCEL
-# =============================================================================
-lc1 = "/ImagenesFormsMap/ImagenesCampo/MLU AIR-E/"
-lc2 = "/MLU AIR-E/"
+#prefijo del tipo equipo
 prefijo = "750_"
+
 #credenciales
 usuario = 'lcabrera2'
 contraseña = '123456'
-
-
+# =============================================================================
+# 
+# =============================================================================
+lc1 = "/ImagenesFormsMap/ImagenesCampo/MLU AIR-E/"
+lc2 = "/MLU AIR-E/"
 
 if usuario == 'lcabrera2':
     inicio = lc2
@@ -52,7 +61,7 @@ else:
 df = pd.read_excel('descarga_lev_apoyo.xlsx') # SE CARGA EL ARCHIVO EXCEL QUE ESTA DENTRO DE LA CARPETA
 #rellenar vacias por ceros
 df.fillna(0, inplace=True)
-#SE CREA RUTA INCIAL A PARTIR DE ARCHIVO EXCEL Y SE EMPAQUETA EN LSITAS
+#SE CREA RUTA INCIAL A PARTIR DE ARCHIVO EXCEL Y SE EMPAQUETA EN LISTAS
 for i in df.index:
     ruta_servidor =inicio+str(df["TERRITORIO"][i])+"/"+str(df["SUB_ESTACION"][i])+"/"+str(df["CIRCUITO"][i])+"/LEVANTAMIENTO/"+str(df["RUTA"][i])
     lista_ruta_servidor.append(ruta_servidor)
@@ -62,7 +71,7 @@ for i in df.index:
     lista_descarga.append(n_id_ap)
     lista_id_ap.append(n_id_ap)
     
-    # print(i)
+    #print(i)
     
 # print(lista_ruta_servidor)
 print(len(lista_ruta_servidor))
@@ -76,7 +85,7 @@ ftp.set_pasv(False)                                     #modo activo
 ftp.connect('formap.co', 21, timeout= 10)              # servidor, puerto y tiempo de espera
 ftp.login(usuario, contraseña)                        #credenciales
 ftp.encoding = "UTF-8"
-print("conexion correcta") 
+print("conexion ftp correcta") 
 # print(ftp.getwelcome())                             #mensaje de bienvenida
 print(" ")
     
@@ -116,7 +125,7 @@ for ruta in lista_ruta_final_ap[0:len(lista_ruta_final_ap)]:
             ftp.connect('formap.co', 21, timeout= 10)              # servidor, puerto y tiempo de espera
             ftp.login(usuario, contraseña)                       #credenciales
             ftp.encoding = "UTF-8"
-            print("conexion correcta")
+            print("conexion ftp correcta")
         
         except Exception as e:
             lista_Error_ap.append(id_ap)
@@ -137,11 +146,11 @@ print(" ")
 confirma_descarga = input("¿desea comenzar la descargar?  si / no  : ")
 print(" ")
 #CODIGO DE DESCARGA
-if confirma_descarga == "si":    
+if confirma_descarga.lower() == "si":    
     n=0
     for nombre_carpeta in lista_ok_ap[0:len(lista_ok_ap)]: #SE CREAN LAS CARPETAS LOCALES
         try:
-            os.mkdir('//10.20.11.240/censo$/RF_Censo/RF_Ises/Adicional/Desconectados/'+prefijo+nombre_carpeta)
+            os.mkdir(rutaDescarga+'/'+prefijo+nombre_carpeta)
         except FileExistsError:
             #print("apoyo duplicado / carpeta ya creada: 762_"+str(nombre_carpeta))
             lista_id_carpetas_existentes.append(nombre_carpeta)
@@ -152,14 +161,14 @@ if confirma_descarga == "si":
     ftp.connect('formap.co', 21, timeout= 10)              # servidor, puerto y tiempo de espera
     ftp.login(usuario, contraseña)                       #credenciales
     ftp.encoding = "UTF-8"
-    print("conexion correcta")
+    print("conexion ftp correcta")
     print(" ")      
     
     for nombre_carpeta in lista_ok_ap[0:len(lista_ok_ap)]: #SE CARGAN LAS LAS CARPETAS LOCALES
         while True:
-            os.chdir('//10.20.11.240/censo$/RF_Censo/RF_Ises/Adicional/Desconectados/'+prefijo+nombre_carpeta)
+            os.chdir(rutaDescarga+'/'+prefijo+nombre_carpeta)
             print(" ")
-            print(prefijo+nombre_carpeta+" "+str(n+1))
+            print(prefijo+nombre_carpeta+" "+str(n+1)+'/'+str(len(lista_ruta_final_ap)))
             try:
                 ftp.cwd(lista_ruta_final_ap[n])              #SE BUSCA LA RUTA EN EL SERVIDOR
                 # ftp.dir() 
@@ -192,7 +201,7 @@ if confirma_descarga == "si":
                                             
                 break
             except socket.timeout:# I expect a timeout.  I want other exceptions to crash and give me a trace
-                print("Reconectando...")
+                print("Reconectando ftp...")
                 ftp.close()
                 ftp.set_pasv(False)                                     #modo activo
                 ftp.connect('formap.co', 21, timeout= 10)              # servidor, puerto y tiempo de espera
@@ -203,10 +212,11 @@ if confirma_descarga == "si":
         lista_descargado.append(nombre_carpeta)
     print("------- termenino descarga ap-------")
 
+    df_descargado = pd.DataFrame(lista_descargado)
+    df_descargado.to_excel('C:/Users/doalf/Desktop/RF/descargados_23052023.xlsx', sheet_name='Descargados', index = False)
+
 else:
     print("no se descargo nada")    #EN CASO DE NO COLOCAR si 
 
 ftp.close()
 
-df_descargado = pd.DataFrame(lista_descargado)
-df_descargado.to_excel('C:/Users/P568/Desktop/PROYECTOS_ISES/FTP_DESCARGA/descargados_0304.xlsx', sheet_name='Descargados', index = False)
