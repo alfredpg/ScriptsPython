@@ -218,6 +218,7 @@ if confirma_descarga.lower() == "si":
 else:
     print("no se descargo nada")    #EN CASO DE NO COLOCAR si 
 
+<<<<<<< HEAD
 ftp.close()
 
 =======
