@@ -4,13 +4,6 @@
 # CAMBIAR ESPACIOS POR _
 # CAMBIAR LOS NOMBRES DE LOS TERRITORIOS 01_ 02_ ETC
 # =============================================================================
-# =============================================================================
-#  IndexError: list index out of range = 
-#  SIGIFICA QUE NO HAY CARPETA MATRICULACION DENTRO DEL CIRCUITO
-#
-#  error_perm: 550 CWD failed. "/MLU AIR-E/03_MAGDALENA/PLATO/PLATO__I": directory not found. =
-#  ALGO DEBER ESTAR MAL ESCRITO EN EL EXCEL
-# =============================================================================
 
 # LIBRERIAS
 from ftplib import FTP
