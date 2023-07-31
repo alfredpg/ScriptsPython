@@ -20,8 +20,6 @@ import socket
 
 #LISTAS USADAS EN TODO EL PROCESO
 
-#lista para descargar 
-# lista_descarga = ['761_20589350','761_20589349','761_20589337']
 lista_ruta_servidor = []
 lista_descarga = []
 lista_id_tx = []
