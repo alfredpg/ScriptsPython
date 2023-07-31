@@ -19,7 +19,6 @@ import pandas as pd
 import socket
 
 #LISTAS USADAS EN TODO EL PROCESO
-
 lista_ruta_servidor = []
 lista_descarga = []
 lista_id_tx = []
