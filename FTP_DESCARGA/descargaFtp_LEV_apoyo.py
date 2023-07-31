@@ -35,11 +35,12 @@ lista_ok_tx = []
 lista_Error_rutas_servidor =[]
 lista_descargado =[] 
 lista_id_carpetas_existentes = []
+lista_id_archivos_sin_permiso =[]
 # =============================================================================
 # VARIABLES CAMBIANTES
 # =============================================================================
 #Ruta donde se descargaran
-rutaDescarga = "//10.20.11.240/censo$/RF_Censo/Alfredo/pruebaDescargaVpn"
+rutaDescarga = "//10.20.11.240/censo$/RF_Censo/RF_Ises/Adicional/AP/Fic"
 
 #prefijo del tipo equipo
 prefijo = "750_"
@@ -58,7 +59,8 @@ if usuario == 'lcabrera2':
 else:
     inicio = lc1
 
-df = pd.read_excel('descarga_lev_apoyo.xlsx') # SE CARGA EL ARCHIVO EXCEL QUE ESTA DENTRO DE LA CARPETA
+df = pd.read_excel('E7.xlsx') # SE CARGA EL ARCHIVO EXCEL QUE ESTA DENTRO DE LA CARPETA
+nombreDescargados = "descargados_E7.xlsx"
 #rellenar vacias por ceros
 df.fillna(0, inplace=True)
 #SE CREA RUTA INCIAL A PARTIR DE ARCHIVO EXCEL Y SE EMPAQUETA EN LISTAS
@@ -133,7 +135,7 @@ for ruta in lista_ruta_final_ap[0:len(lista_ruta_final_ap)]:
             # print(ruta)
             lista_ruta_final_ap.remove(ruta)
             break
-    print(n)
+    print(str(n+1)+" analizados de "+ str(len(lista_ruta_servidor)))
     n = n+1
 
 print("SE ENCONTRARON " + str(len(lista_ruta_final_ap)) + " AP")
@@ -141,9 +143,9 @@ print("SE ENCONTRARON " + str(len(lista_ruta_final_ap)) + " AP")
 print(" ")
 
 #AUTORIZACION PARA DESCARGAR
-confirma_descarga = "no"
+confirma_descarga = "si"
 print(" ")
-confirma_descarga = input("¿desea comenzar la descargar?  si / no  : ")
+#confirma_descarga = input("¿desea comenzar la descargar?  si / no  : ")
 print(" ")
 #CODIGO DE DESCARGA
 if confirma_descarga.lower() == "si":    
@@ -177,27 +179,35 @@ if confirma_descarga.lower() == "si":
                 if 'Temp' in archivos:              #SE ELIMINA LA CARPETA TEMP DE LO QUE SE DESCARGARA
                     # print ('existen archivos temporales')
                     archivos.remove('Temp')
-                    # print(archivos)
+                    print ('se ELIMINO archivos temporales')
                     
                 else:
                     print ('NO existen archivos temporales')
                     #print(archivos)  
                 for archivo in archivos[0:len(archivos)]:   #SE PROCEDE A DESCARGAR
                     while True:
+                        
                         try:
                             abrir = open(archivo, 'wb')
                             ftp.retrbinary("RETR "+ archivo, abrir.write)
                             print("descargando")
                             break
-                            
-                        except:# I expect a timeout.  I want other exceptions to crash and give me a trace
-                            print("Reconectando para seguir la descarga...")
+                        
+                        except PermissionError:
+                            print("No tienes permisos.")
+                            lista_id_archivos_sin_permiso.append(nombre_carpeta)
+                            break
+                        
+                        except Exception as e:
+                            print(f"Ocurrió un error: {e}")# I expect a timeout.  I want other exceptions to crash and give me a trace
+                            print("Reconectando para seguir la descarga... 3")
                             ftp.close()
                             ftp.set_pasv(False)                                     #modo activo
                             ftp.connect('formap.co', 21, timeout= 10)              # servidor, puerto y tiempo de espera
                             ftp.login(usuario, contraseña)                        #credenciales
                             ftp.encoding = "UTF-8"
                             ftp.cwd(lista_ruta_final_ap[n])
+                        
                                             
                 break
             except socket.timeout:# I expect a timeout.  I want other exceptions to crash and give me a trace
@@ -207,14 +217,16 @@ if confirma_descarga.lower() == "si":
                 ftp.connect('formap.co', 21, timeout= 10)              # servidor, puerto y tiempo de espera
                 ftp.login(usuario, contraseña)                        #credenciales
                 ftp.encoding = "UTF-8"
+                
 
         n = n+1
         lista_descargado.append(nombre_carpeta)
     print("------- termenino descarga ap-------")
 
+    lista_id_archivos_sin_permiso = list(set(lista_id_archivos_sin_permiso))
     df_descargado = pd.DataFrame(lista_descargado)
-    df_descargado.to_excel('C:/Users/doalf/Desktop/RF/descargados_23052023.xlsx', sheet_name='Descargados', index = False)
-
+    df_descargado.to_excel('C:/Users/P545/OneDrive - INGENIERIA Y SOLUCIONES ESPECIALIZADAS S.A.S. (ISES)/Escritorio/PROYECTOS_ISES/FTP_DESCARGA/'+nombreDescargados, sheet_name='Descargados', index = False)
+    print(nombreDescargados)
 else:
     print("no se descargo nada")    #EN CASO DE NO COLOCAR si 
 
