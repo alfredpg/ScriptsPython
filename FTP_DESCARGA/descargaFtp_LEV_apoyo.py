@@ -4,12 +4,43 @@
 # CAMBIAR ESPACIOS POR _
 # CAMBIAR LOS NOMBRES DE LOS TERRITORIOS 01_ 02_ ETC
 # =============================================================================
-
 # LIBRERIAS
+# =============================================================================
 from ftplib import FTP
 import os
 import pandas as pd
 import socket
+import time
+import sys
+# =============================================================================
+# FUNCIONES
+# =============================================================================
+
+def reconectar_ftp(mensajeInicio):
+    global usuario, contraseña
+    while True:
+        try:
+            print(mensajeInicio)
+            ftp = FTP()
+            ftp.close()
+            ftp.set_pasv(False)  # Modo activo
+            ftp.connect('formap.co', 21, timeout=10)  # Servidor, puerto y tiempo de espera
+            ftp.login(usuario, contraseña)  # Credenciales
+            ftp.encoding = "UTF-8"
+            print("conexion ftp correcta")
+            return ftp
+        except Exception as e:
+            print(f"Error al conectar FTP: {e}")
+            print("Reintentando en 5 segundos...")
+            time.sleep(5)
+
+def formatear_ruta(cadena):
+    return cadena.replace("\\", "/")
+
+def obtener_ruta_script():
+    # Obtener la ruta del archivo .py que está siendo ejecutado
+    ruta_script = os.path.abspath(sys.argv[0])
+    return os.path.dirname(ruta_script)
 
 #LISTAS USADAS EN TODO EL PROCESO
 lista_ruta_servidor = []
@@ -30,17 +61,21 @@ lista_id_archivos_sin_permiso =[]
 # VARIABLES CAMBIANTES
 # =============================================================================
 #Ruta donde se descargaran
-rutaDescarga = "//10.20.11.240/censo$/RF_Censo/RF_Ises/Adicional/AP/Fic"
+rutaDescarga = r"//10.20.11.240/censo$/RF_Censo/Alfredo/prueba01082023"
 
 #prefijo del tipo equipo
-prefijo = "750_"
+prefijo = "762_"
 
 #credenciales
 usuario = 'lcabrera2'
 contraseña = '123456'
+#nombre del excel a descargar
+nombreExcel = "A1.xlsx"
 # =============================================================================
-# 
-# =============================================================================
+excepcion_previa = ""
+rutaScript = obtener_ruta_script()
+rutaDescargaFormat = formatear_ruta(rutaDescarga)
+
 lc1 = "/ImagenesFormsMap/ImagenesCampo/MLU AIR-E/"
 lc2 = "/MLU AIR-E/"
 
@@ -49,8 +84,8 @@ if usuario == 'lcabrera2':
 else:
     inicio = lc1
 
-df = pd.read_excel('E7.xlsx') # SE CARGA EL ARCHIVO EXCEL QUE ESTA DENTRO DE LA CARPETA
-nombreDescargados = "descargados_E7.xlsx"
+df = pd.read_excel(nombreExcel) # SE CARGA EL ARCHIVO EXCEL QUE ESTA DENTRO DE LA CARPETA
+nombreDescargados = "descargados_"+nombreExcel
 #rellenar vacias por ceros
 df.fillna(0, inplace=True)
 #SE CREA RUTA INCIAL A PARTIR DE ARCHIVO EXCEL Y SE EMPAQUETA EN LISTAS
@@ -72,12 +107,7 @@ print(len(lista_ruta_servidor))
 # print(len(lista_descarga))
 
 #INICIAMOS SESION EN EL SERVIDOR 
-ftp = FTP()
-ftp.set_pasv(False)                                     #modo activo
-ftp.connect('formap.co', 21, timeout= 10)              # servidor, puerto y tiempo de espera
-ftp.login(usuario, contraseña)                        #credenciales
-ftp.encoding = "UTF-8"
-print("conexion ftp correcta") 
+ftp = reconectar_ftp("") 
 # print(ftp.getwelcome())                             #mensaje de bienvenida
 print(" ")
     
@@ -92,8 +122,6 @@ for ruta in lista_ruta_servidor[0:len(lista_ruta_servidor)]:
     ruta_final = ruta+"/"+prefijo+lista_id_ap[n]
     n = n+1
     lista_ruta_final_ap.append(ruta_final)
-    
-# print(lista_ruta_final_tx)
 # print(" ")
 # print(lista_ruta_final_ap)
 
@@ -104,6 +132,9 @@ print("DE " + str(len(lista_ruta_final_ap)) + " AP BUSCADOS")
 n=0
 for ruta in lista_ruta_final_ap[0:len(lista_ruta_final_ap)]:
     while True:
+        if n != 0 and n % 3000 == 0:
+            ftp = reconectar_ftp(f"Reconectando de la pausa {n}")
+            
         id_ap = lista_id_ap[n]
         try:
             ftp.cwd(ruta)
@@ -111,15 +142,10 @@ for ruta in lista_ruta_final_ap[0:len(lista_ruta_final_ap)]:
             break
         
         except socket.timeout:# I expect a timeout.  I want other exceptions to crash and give me a trace
-            print("Reconectando...")
-            ftp.close()
-            ftp.set_pasv(False)                                     #modo activo
-            ftp.connect('formap.co', 21, timeout= 10)              # servidor, puerto y tiempo de espera
-            ftp.login(usuario, contraseña)                       #credenciales
-            ftp.encoding = "UTF-8"
-            print("conexion ftp correcta")
+            ftp = reconectar_ftp("Reconectando...")
         
         except Exception as e:
+            print(f"Ocurrió un error: {e}")
             lista_Error_ap.append(id_ap)
             lista_Error_rutas_servidor.append(ruta)
             # print(ruta)
@@ -133,32 +159,36 @@ print("SE ENCONTRARON " + str(len(lista_ruta_final_ap)) + " AP")
 print(" ")
 
 #AUTORIZACION PARA DESCARGAR
-confirma_descarga = "si"
+confirma_descarga = "SI"
 print(" ")
-#confirma_descarga = input("¿desea comenzar la descargar?  si / no  : ")
+confirma_descarga = input("¿desea comenzar la descargar?  si / no  : ")
 print(" ")
 #CODIGO DE DESCARGA
-if confirma_descarga.lower() == "si":    
-    n=0
-    for nombre_carpeta in lista_ok_ap[0:len(lista_ok_ap)]: #SE CREAN LAS CARPETAS LOCALES
-        try:
-            os.mkdir(rutaDescarga+'/'+prefijo+nombre_carpeta)
-        except FileExistsError:
-            #print("apoyo duplicado / carpeta ya creada: 762_"+str(nombre_carpeta))
-            lista_id_carpetas_existentes.append(nombre_carpeta)
+if confirma_descarga.lower() == "si":
+    print("PREPARANDOSE PARA LA DESCARGA")     
     
-    print("VALIDAREMOS LA CONEXION PARA COMENZAR LA DESCARGA")
-    ftp.close()
-    ftp.set_pasv(False)                                     #modo activo
-    ftp.connect('formap.co', 21, timeout= 10)              # servidor, puerto y tiempo de espera
-    ftp.login(usuario, contraseña)                       #credenciales
-    ftp.encoding = "UTF-8"
-    print("conexion ftp correcta")
+    for nombre_carpeta in lista_ok_ap[0:len(lista_ok_ap)]: #SE CREAN LAS CARPETAS LOCALES
+        while True:
+            try:
+                os.mkdir(rutaDescargaFormat+'/'+prefijo+nombre_carpeta)
+                break
+            except FileExistsError:
+                #print("apoyo duplicado / carpeta ya creada: 762_"+str(nombre_carpeta))
+                lista_id_carpetas_existentes.append(nombre_carpeta)
+                break
+            except Exception as e:
+                if str(type(e)) != excepcion_previa:
+                    print(f"Ocurrió un error: {e}")
+                excepcion_previa = str(type(e))
+    
+    #print("VALIDAREMOS LA CONEXION PARA COMENZAR LA DESCARGA")
+    ftp = reconectar_ftp("VALIDANDO LA CONEXION PARA COMENZAR LA DESCARGA")
     print(" ")      
     
+    n=0
     for nombre_carpeta in lista_ok_ap[0:len(lista_ok_ap)]: #SE CARGAN LAS LAS CARPETAS LOCALES
         while True:
-            os.chdir(rutaDescarga+'/'+prefijo+nombre_carpeta)
+            os.chdir(rutaDescargaFormat+'/'+prefijo+nombre_carpeta)
             print(" ")
             print(prefijo+nombre_carpeta+" "+str(n+1)+'/'+str(len(lista_ruta_final_ap)))
             try:
@@ -169,8 +199,7 @@ if confirma_descarga.lower() == "si":
                 if 'Temp' in archivos:              #SE ELIMINA LA CARPETA TEMP DE LO QUE SE DESCARGARA
                     # print ('existen archivos temporales')
                     archivos.remove('Temp')
-                    print ('se ELIMINO archivos temporales')
-                    
+                    print ('se ELIMINO archivos temporales')                    
                 else:
                     print ('NO existen archivos temporales')
                     #print(archivos)  
@@ -190,32 +219,25 @@ if confirma_descarga.lower() == "si":
                         
                         except Exception as e:
                             print(f"Ocurrió un error: {e}")# I expect a timeout.  I want other exceptions to crash and give me a trace
-                            print("Reconectando para seguir la descarga... 3")
-                            ftp.close()
-                            ftp.set_pasv(False)                                     #modo activo
-                            ftp.connect('formap.co', 21, timeout= 10)              # servidor, puerto y tiempo de espera
-                            ftp.login(usuario, contraseña)                        #credenciales
-                            ftp.encoding = "UTF-8"
+                            ftp = reconectar_ftp("Reconectando para seguir la descarga...") 
                             ftp.cwd(lista_ruta_final_ap[n])
                         
-                                            
                 break
             except socket.timeout:# I expect a timeout.  I want other exceptions to crash and give me a trace
-                print("Reconectando ftp...")
-                ftp.close()
-                ftp.set_pasv(False)                                     #modo activo
-                ftp.connect('formap.co', 21, timeout= 10)              # servidor, puerto y tiempo de espera
-                ftp.login(usuario, contraseña)                        #credenciales
-                ftp.encoding = "UTF-8"
+                ftp = reconectar_ftp("Reconectando ftp...") 
+            except Exception as e:
+                print(f"Ocurrió un error: {e}")# I expect a timeout.  I want other exceptions to crash and give me a trace
+                ftp = reconectar_ftp("Reconectando para seguir la descarga...")
                 
-
+            
         n = n+1
         lista_descargado.append(nombre_carpeta)
     print("------- termenino descarga ap-------")
 
     lista_id_archivos_sin_permiso = list(set(lista_id_archivos_sin_permiso))
     df_descargado = pd.DataFrame(lista_descargado)
-    df_descargado.to_excel('C:/Users/P545/OneDrive - INGENIERIA Y SOLUCIONES ESPECIALIZADAS S.A.S. (ISES)/Escritorio/PROYECTOS_ISES/FTP_DESCARGA/'+nombreDescargados, sheet_name='Descargados', index = False)
+    os.chdir(rutaScript)
+    df_descargado.to_excel(nombreDescargados, sheet_name='Descargados', index = False)
     print(nombreDescargados)
 else:
     print("no se descargo nada")    #EN CASO DE NO COLOCAR si 
